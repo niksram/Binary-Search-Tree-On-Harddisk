@@ -12,6 +12,10 @@ int main()
     insert_key(3,fp);
     insert_key(9,fp);
     insert_key(7,fp);
+    insert_key(15,fp);
+    insert_key(12,fp);
+    insert_key(13,fp);
+    delete_key(10,fp);
     display_preorder(fp);
     display_inorder(fp);
     close_tree(fp);
