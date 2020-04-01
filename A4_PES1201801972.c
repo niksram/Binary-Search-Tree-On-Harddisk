@@ -37,17 +37,19 @@ int insert_at_free(FILE *fp, node_t new, tree_t tree)
 {
     if (tree.free_head >= 0)
     {
+        int old_free_head=tree.free_head;
         node_t node = read_node(fp, tree.free_head);
         write_node(fp, new, tree.free_head);
         tree.free_head = node.left_offset;
         write_tree(fp, tree);
+        return(old_free_head);
     }
     else
     {
         fseek(fp, 0, SEEK_END);
         fwrite(&new, sizeof(new), 1, fp);
+        return ((ftell(fp) - sizeof(tree_t) - sizeof(node_t)) / sizeof(node_t));
     }
-    return ((ftell(fp) - sizeof(tree_t) - sizeof(node_t)) / sizeof(node_t));
 }
 
 node_t create_node(int key)
@@ -185,70 +187,66 @@ void delete_key(int key, FILE *fp)
                 flag--;
         }
 
-        if (node.left_offset != -1)
+        if (node.right_offset == -1)
         {
-            if (node.right_offset == -1)
+            if (parent_offset == -1)
             {
+                tree_t tree = read_tree(fp);
+                tree.root = node.left_offset;
+                write_tree(fp, tree);
+            }
+            else
+            {
+                node_t parent = read_node(fp, parent_offset);
+                if (left)
+                    parent.left_offset = node.left_offset;
+                else
+                    parent.right_offset = node.left_offset;
+                write_node(fp, parent, parent_offset);
+            }
+        }
+        else
+        {
+            node_t new = read_node(fp, node.right_offset);
+            int new_offset = node.right_offset;
+            int new_parent_offset = -1;
+            while (new.left_offset != -1)
+            {
+                new_parent_offset = new_offset;
+                new_offset = new.left_offset;
+                new = read_node(fp, new_offset);
+            }
+            if (new_parent_offset != -1)
+            {
+                node_t new_par = read_node(fp, new_parent_offset);
+                new_par.left_offset = new.right_offset;
+                write_node(fp, new_par, new_parent_offset);
+                node.key = new.key;
+                write_node(fp, node, curr_offset);
+                curr_offset = new_offset;
+            }
+            else
+            {
+                new.left_offset = node.left_offset;
+                write_node(fp, new, new_offset);
                 if (parent_offset == -1)
                 {
                     tree_t tree = read_tree(fp);
-                    tree.root = node.left_offset;
+                    tree.root = node.right_offset;
                     write_tree(fp, tree);
                 }
                 else
                 {
                     node_t parent = read_node(fp, parent_offset);
                     if (left)
-                        parent.left_offset = node.left_offset;
+                        parent.left_offset = node.right_offset;
                     else
-                        parent.right_offset = node.left_offset;
+                        parent.right_offset = node.right_offset;
                     write_node(fp, parent, parent_offset);
                 }
             }
-            else
-            {
-                node_t new = read_node(fp, node.right_offset);
-                int new_offset = node.right_offset;
-                int new_parent_offset = -1;
-                while (new.left_offset != -1)
-                {
-                    new_parent_offset = new_offset;
-                    new_offset = new.left_offset;
-                    new = read_node(fp, new_offset);
-                }
-                if (new_parent_offset != -1)
-                {
-                    node_t new_par = read_node(fp, new_parent_offset);
-                    printf("newe%d %d %d\n",new.key,new_par.key,node.key);
-                    new_par.left_offset = new.right_offset;
-                    write_node(fp, new_par, new_parent_offset);
-                    node.key = new.key;
-                    write_node(fp, node, curr_offset);
-                    curr_offset=new_offset;
-                }
-                else
-                {
-                    new.left_offset=node.left_offset;
-                    write_node(fp,new,new_offset);
-                    if (parent_offset == -1)
-                    {
-                        tree_t tree = read_tree(fp);
-                        tree.root = node.right_offset;
-                        write_tree(fp, tree);
-                    }
-                    else
-                    {
-                        node_t parent = read_node(fp, parent_offset);
-                        if (left)
-                            parent.left_offset = node.right_offset;
-                        else
-                            parent.right_offset = node.right_offset;
-                        write_node(fp, parent, parent_offset);
-                    }
-                }
-            }
         }
-        free_node(fp,curr_offset);
+        free_node(fp, curr_offset);
     }
 }
 
