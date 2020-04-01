@@ -11,7 +11,7 @@ int main()
     int val;
     int inp;
     int flag = 1;
-    while (1)
+    while (flag)
     {
         scanf("%d", &inp);
         switch (inp)
