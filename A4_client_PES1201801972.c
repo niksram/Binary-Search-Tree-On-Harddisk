@@ -63,10 +63,30 @@ void display_with_index(FILE *fp)
     {
         fread(node2, sizeof(node_t), 1, fp);
         if(c)
-            printf("key-%d left-%d right-%d\n", node.key, node.left_offset, node.right_offset);
+            printf("%d key: %d left:%d right: %d\n", c-1, node.key, node.left_offset, node.right_offset);
         node=*node2;
         c++;
     }
     printf("\n");
     free(node2);
 }
+
+// void display_with_index(FILE *fp)
+// {
+//     fseek(fp, 0, SEEK_SET);
+//     tree_t tree;
+//     node_t node,*node2=malloc(sizeof(node_t));
+//     fread(&tree, sizeof(tree_t), 1, fp);
+//     printf("%d %d\n", tree.root, tree.free_head);
+//     int c=1;
+//     while (!feof(fp))
+//     {
+//         fread(&node, sizeof(node_t), 1, fp);
+//         if(c)
+//             printf("%d key-%d left-%d right-%d\n", c-1, node.key, node.left_offset, node.right_offset);
+//         //node=*node2;
+//         c++;
+//     }
+//     printf("\n");
+//     free(node2);
+// }
