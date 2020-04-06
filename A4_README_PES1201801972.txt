@@ -1,0 +1,18 @@
+Key Takeaways:
+
+    We can impart both the benefits of linearly grouped elements (array) as well as dynamically allocated memory (linked lists) 
+    to seamlessly insert and delete elements without affecting other elements relative location.
+
+    Directly dumping as well as extracting data elements into binary file without converting it into human understandable format.
+
+    Using required instance of data directly from file when required instead of reading the entire file and clogging lot of run-time memory.
+    Hence writing it immediately to file after modification.
+
+    The concept of pointers pointing to a particular memory location don't make sense outside the scope of a run-time of a program hence
+    offsets must be used in order to preserve the relative position.
+
+Notes:
+
+    when only left or right child exists for the node to be deleted, the single child is pushed up to the location of the deleted node.
+    
+    when both the child exists, then the in-order successor is computed and put at the deleted nodes location.
