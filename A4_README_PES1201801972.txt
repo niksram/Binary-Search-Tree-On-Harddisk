@@ -16,3 +16,5 @@ Notes:
     when only left or right child exists for the node to be deleted, the single child is pushed up to the location of the deleted node.
     
     when both the child exists, then the in-order successor is computed and put at the deleted nodes location.
+	when inorder successor is towards the left of the right child of the node to be deleted, I am copying the value of the inorder 
+	successor to the node to be deleted, and hence freeing the inorder successor node in the file.  

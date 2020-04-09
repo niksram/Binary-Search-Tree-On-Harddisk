@@ -5,12 +5,15 @@ void display_with_index(FILE *);
 
 int main()
 {
+    printf("enter complete file name\n");
     char c[100];
     scanf("%s", c);
     FILE *fp = init_tree(c);
     int val;
     int inp;
     int flag = 1;
+    printf("1 for inserting, 2 for deleting, 3 for printing inorder, 4 for printing preorder, 0 for printing file contents as it is\n");
+    printf("enter some other value to exit safely\n");
     while (flag)
     {
         scanf("%d", &inp);
